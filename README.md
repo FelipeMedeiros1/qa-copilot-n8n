@@ -118,6 +118,35 @@ https://raw.githubusercontent.com/FelipeMedeiros1/qa-copilot-n8n/main/workflows/
 
 As credenciais ficam configuradas dentro do n8n e não devem ser versionadas no repositório.
 
+## Como conseguir uma chave da OpenAI API
+
+Documentação oficial:
+
+- [OpenAI API Quickstart](https://platform.openai.com/docs/quickstart)
+- [OpenAI API Keys](https://platform.openai.com/api-keys)
+
+Passo a passo:
+
+1. Acesse [https://platform.openai.com](https://platform.openai.com).
+2. Faça login ou crie uma conta.
+3. Abra a área de API keys: [https://platform.openai.com/api-keys](https://platform.openai.com/api-keys).
+4. Selecione o projeto correto ou crie um novo projeto para o QA Copilot.
+5. Clique em `Create new secret key`.
+6. Dê um nome identificável para a chave, por exemplo `qa-copilot-n8n`.
+7. Copie a chave gerada e guarde em um local seguro.
+8. Configure billing, limites de uso e permissões do projeto conforme a política da sua conta.
+9. No n8n, crie uma credencial do tipo `OpenAI API`.
+10. Cole a chave no campo da credencial e salve.
+11. Volte ao workflow e selecione essa credencial em todos os nodes `OpenAI Chat Model`.
+
+Cuidados importantes:
+
+- A chave aparece apenas uma vez no momento da criação. Se perder, gere outra.
+- Nunca coloque a chave no GitHub, README, CSV, workflow exportado ou prints.
+- Use uma chave por ambiente quando possível, por exemplo `dev`, `homolog` e `prod`.
+- Revogue imediatamente a chave se houver suspeita de vazamento.
+- Em scripts locais, prefira variável de ambiente `OPENAI_API_KEY` em vez de chave fixa no código.
+
 ## Configuração recomendada
 
 Após importar o workflow, confira:
