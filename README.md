@@ -128,6 +128,38 @@ Após importar o workflow, confira:
 - Se o campo `sessionId` está chegando pelo chat para manter memória por sessão.
 - Se o roteador retorna exatamente uma das intenções aceitas pelo `Switch`.
 
+## Ferramentas que podem ajudar no processo
+
+O QA Copilot pode ser evoluído com integrações no n8n para buscar contexto, registrar evidências, abrir tarefas e publicar documentação automaticamente.
+
+| Ferramenta | Como pode ajudar |
+| --- | --- |
+| Jira | Buscar user stories, critérios de aceite, bugs e épicos; criar subtarefas de QA; anexar evidências; atualizar status e comentários. |
+| Xray ou Zephyr | Criar casos de teste, cenários Gherkin, planos de teste, execuções e rastreabilidade entre requisito, teste e defeito. |
+| Confluence | Consultar documentação funcional, regras de negócio, manuais, atas de refinamento e publicar planos ou relatórios de teste. |
+| Google Sheets | Manter a base de conhecimento, massas de teste, matriz de risco, checklist de regressão e dados de apoio para o workflow. |
+| Google Drive ou OneDrive | Armazenar evidências, prints, relatórios, coleções, arquivos de massa e documentos gerados pelo QA Copilot. |
+| Slack ou Microsoft Teams | Enviar resumo de análise, riscos, status de execução, alertas de falha e links para evidências ou issues. |
+| GitHub ou GitLab | Ler pull requests, issues e pipelines; comentar achados de QA; acompanhar status de CI/CD e versionar coleções ou scripts. |
+| Azure DevOps | Integrar work items, test plans, pipelines, bugs e rastreabilidade em times que usam ecossistema Microsoft. |
+| Postman ou Bruno API | Organizar coleções de API, ambientes, variáveis, exemplos de payload e validações manuais ou automatizadas. |
+| OpenAPI ou Swagger | Usar contratos de API como fonte para gerar cenários, validar payloads, comparar schema e identificar mudanças quebráveis. |
+| Playwright | Automatizar testes end-to-end de UI, gerar evidências de execução e integrar cenários críticos ao pipeline. |
+| Rest Assured | Automatizar testes de API em Java, validando status, headers, schema, payloads, autenticação e contratos. |
+| K6 ou JMeter | Apoiar testes de performance, carga, stress, spike e coleta de métricas como latência, throughput e taxa de erro. |
+| Grafana, Datadog ou New Relic | Consultar métricas, logs, traces e dashboards para enriquecer análise de falhas e evidências de performance. |
+| ServiceNow | Registrar incidentes, problemas, mudanças e evidências quando o processo de QA estiver ligado a governança corporativa. |
+
+Sugestões de automações úteis:
+
+- Criar casos de teste no Jira/Xray a partir de uma user story.
+- Gerar página no Confluence com plano de teste, riscos e critérios de aceite revisados.
+- Consultar a base no Google Sheets antes de responder perguntas de QA.
+- Enviar resumo no Slack ou Teams quando uma análise crítica for concluída.
+- Anexar evidências no Jira ou Google Drive após execução de teste.
+- Ler contrato OpenAPI e gerar cenários positivos, negativos e de segurança.
+- Consultar logs e métricas em ferramentas de observabilidade para investigar falhas.
+
 ## Exemplos de perguntas
 
 - `Crie cenários Gherkin para transferência PIX.`
