@@ -1,0 +1,11 @@
+palavra_chave,categoria,titulo,conteudo,tags,exemplo_pergunta
+login,API,Login PIX,"Endpoint responsável por autenticar o cliente antes de acessar funcionalidades PIX. Deve validar credenciais, token, MFA quando aplicável e bloquear tentativas inválidas.","login,pix,mfa,seguranca",Crie cenários para Login PIX
+pix,API,Transferência PIX,"Fluxo responsável por realizar transferência PIX entre contas. Deve validar saldo, chave PIX, limite transacional, autenticação, antifraude e comprovante.","pix,transferencia,pagamento",Crie testes para transferência PIX
+jwt,Segurança,Token JWT,"Todas as APIs privadas devem exigir Authorization Bearer Token. Tokens expirados, inválidos ou ausentes devem retornar erro de autenticação.","jwt,oauth,token,seguranca",Como testar autenticação JWT?
+saldo,API,Consulta de Saldo,"Endpoint responsável por retornar saldo disponível, saldo bloqueado e saldo total da conta. Deve exigir autenticação válida e respeitar autorização do cliente.","saldo,conta,api",Crie testes para consulta de saldo
+limite,Negócio,Limite PIX,Transferências acima do limite permitido devem ser bloqueadas ou exigir autenticação adicional conforme regra de negócio.,"pix,limite,mfa",Crie cenários para limite PIX
+extrato,API,Consulta de Extrato,"Funcionalidade responsável por listar transações da conta por período, tipo de operação e paginação.","extrato,transacoes,conta",Crie testes para extrato bancário
+comprovante,Negócio,Comprovante PIX,"Após uma transferência PIX concluída, o sistema deve gerar comprovante com data, valor, pagador, recebedor e identificador da transação.","pix,comprovante,auditoria",Como validar comprovante PIX?
+auditoria,Segurança,Logs e Auditoria,Toda operação financeira crítica deve gerar logs técnicos e trilhas de auditoria sem expor dados sensíveis.,"logs,auditoria,lgpd",Quais logs validar em operação financeira?
+lgpd,Segurança,Proteção de Dados,"Dados sensíveis como CPF, token, senha e dados bancários não devem ser expostos em logs, responses, prints ou relatórios de teste.","lgpd,seguranca,dados",Quais cuidados LGPD nos testes?
+xray,QA,Padrão Jira/Xray,"Casos de teste devem ser escritos em Gherkin, vinculados à User Story, com evidências, massa de teste e rastreabilidade.","jira,xray,gherkin,bdd",Como criar caso de teste no Xray?
