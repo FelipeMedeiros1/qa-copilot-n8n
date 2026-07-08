@@ -1,0 +1,1032 @@
+{
+  "name": "QA Copilot",
+  "nodes": [
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "82ca4727-86b6-49d3-a373-b80e898cb8bf",
+              "name": "pergunta_usuario",
+              "value": "={{ $json.chatInput }}",
+              "type": "string"
+            },
+            {
+              "id": "822aded1-ae53-47c7-953a-7295b83717bf",
+              "name": "mensagem",
+              "value": "={{ $json.chatInput }}",
+              "type": "string"
+            },
+            {
+              "id": "0ac377bd-87db-48eb-a7c7-5ed762ad0534",
+              "name": "especialidade",
+              "value": "QA Senior Especialista",
+              "type": "string"
+            },
+            {
+              "id": "09321423-1139-4aee-a31e-b5282979dc07",
+              "name": "idioma",
+              "value": "Português",
+              "type": "string"
+            },
+            {
+              "id": "723026b9-3c2d-4f73-9053-1a3a25f3f624",
+              "name": "usuario",
+              "value": "QA Engineer",
+              "type": "string"
+            }
+          ]
+        },
+        "includeOtherFields": true,
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        -272,
+        16
+      ],
+      "id": "dc923b75-580a-4d84-ae0d-0117173bc001",
+      "name": "Edit Fields"
+    },
+    {
+      "parameters": {
+        "model": {
+          "__rl": true,
+          "mode": "list",
+          "value": "gpt-5-mini"
+        },
+        "builtInTools": {},
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatOpenAi",
+      "typeVersion": 1.3,
+      "position": [
+        1008,
+        -80
+      ],
+      "id": "68f5dc41-71b0-44bb-9945-6a6bd2cc6b87",
+      "name": "OpenAI Chat Model",
+      "credentials": {
+        "openAiApi": {
+          "id": "ZsQprvwOGrMFJntP",
+          "name": "n8n free OpenAI API credits"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "sessionIdType": "customKey",
+        "sessionKey": "={{ $('Edit Fields').item.json.sessionId }}"
+      },
+      "type": "@n8n/n8n-nodes-langchain.memoryBufferWindow",
+      "typeVersion": 1.4,
+      "position": [
+        1104,
+        -80
+      ],
+      "id": "22c3aec9-f4d9-4889-bd54-b88bf5c2b93a",
+      "name": "Simple Memory"
+    },
+    {
+      "parameters": {
+        "public": true,
+        "initialMessages": "👋 Olá! Seja bem-vindo ao QA Copilot.\n\nEstou aqui para facilitar o trabalho de QA.\n\nPosso criar documentação, revisar requisitos, gerar cenários de teste, automatizar estratégias e ajudar em testes de API, UI, performance e segurança.\n\nO que vamos construir hoje? 🚀",
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.chatTrigger",
+      "typeVersion": 1.4,
+      "position": [
+        -416,
+        16
+      ],
+      "id": "9366927a-f262-41a7-aa22-53b81ff7bf51",
+      "name": "When chat message received",
+      "webhookId": "ae160bdd-fa2b-4aeb-b365-ed53c1bf3482"
+    },
+    {
+      "parameters": {
+        "documentId": {
+          "__rl": true,
+          "value": "1dWK7UaiEfkzB5o7kn7slo_aTWedHNlbzeYuoEIKwDyk",
+          "mode": "list",
+          "cachedResultName": "QA Knowledge Base",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1dWK7UaiEfkzB5o7kn7slo_aTWedHNlbzeYuoEIKwDyk/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "gid=0",
+          "mode": "list",
+          "cachedResultName": "knowledge",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1dWK7UaiEfkzB5o7kn7slo_aTWedHNlbzeYuoEIKwDyk/edit#gid=0"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.7,
+      "position": [
+        -128,
+        16
+      ],
+      "id": "b9c17c0a-66db-4ec2-a566-a854264ea624",
+      "name": "Get row(s) in sheet",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "ZFmQgMbX3115spup",
+          "name": "Google Sheets account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "jsCode": "const linhas = $input.all();\n\nconst contexto = linhas.map(item => `\nCategoria: ${item.json.categoria}\nTítulo: ${item.json.titulo}\nConteúdo: ${item.json.conteudo}\nTags: ${item.json.tags}\n`).join(\"\\n-----------------------------\\n\");\n\n// Recupera os dados do Edit Fields\nconst edit = $(\"Edit Fields\").first().json;\n\nreturn [{\n  json: {\n    pergunta_usuario: edit.pergunta_usuario,\n    mensagem: edit.mensagem,\n    idioma: edit.idioma,\n    usuario: edit.usuario,\n    especialidade: edit.especialidade,\n    contexto\n  }\n}];"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        32,
+        16
+      ],
+      "id": "bdb4f30e-43dd-40a7-a5c1-d8b213af68eb",
+      "name": "Code in JavaScript"
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "={{ $json.pergunta_usuario }}",
+        "messages": {
+          "messageValues": [
+            {
+              "message": "Você é o Router do QA Copilot.  Sua única função é classificar a intenção da pergunta do usuário.  NUNCA responda à pergunta.  NUNCA explique sua decisão.  Retorne SOMENTE uma das opções abaixo:  test-designer api-expert story-reviewer security-qa performance-qa general-qa  Regras de classificação:  - Se envolver:   casos de teste   cenários   gherkin   bdd   smoke   regressão   massa de teste → retorne: test-designer  - Se envolver:   api   endpoint   rest   graphql   json   jwt   oauth   postman   bruno → retorne: api-expert  - Se envolver:   user story   critérios de aceite   refinamento   requisitos → retorne: story-reviewer  - Se envolver:   lgpd   segurança   owasp   autenticação   autorização   vulnerabilidade → retorne: security-qa  - Se envolver:   performance   carga   stress   spike   k6   jmeter → retorne: performance-qa  Caso não se enquadre em nenhuma categoria:  general-qa"
+            }
+          ]
+        },
+        "batching": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.chainLlm",
+      "typeVersion": 1.9,
+      "position": [
+        192,
+        16
+      ],
+      "id": "2393e42b-3e35-4699-be69-3423b5cc2de6",
+      "name": "Basic LLM Chain"
+    },
+    {
+      "parameters": {
+        "model": {
+          "__rl": true,
+          "mode": "list",
+          "value": "gpt-5-mini"
+        },
+        "builtInTools": {},
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatOpenAi",
+      "typeVersion": 1.3,
+      "position": [
+        192,
+        208
+      ],
+      "id": "e10748a1-eeb5-411f-9146-920052351d27",
+      "name": "OpenAI Chat Model1",
+      "credentials": {
+        "openAiApi": {
+          "id": "ZsQprvwOGrMFJntP",
+          "name": "n8n free OpenAI API credits"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "rules": {
+          "values": [
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 3
+                },
+                "conditions": [
+                  {
+                    "leftValue": "={{ $json.text}}",
+                    "rightValue": "test-designer",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals"
+                    },
+                    "id": "e0319f68-e367-4b14-9271-3ce3dd72f41b"
+                  }
+                ],
+                "combinator": "and"
+              }
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 3
+                },
+                "conditions": [
+                  {
+                    "id": "1c9a664f-20cd-49c1-b47e-bf36fcd6fec3",
+                    "leftValue": "={{ $json.text }}",
+                    "rightValue": "api-expert",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals",
+                      "name": "filter.operator.equals"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              }
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 3
+                },
+                "conditions": [
+                  {
+                    "id": "cf2e47d7-2d9d-4f50-be91-8b0292051a05",
+                    "leftValue": "={{ $json.text }}",
+                    "rightValue": "story-reviewer",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals",
+                      "name": "filter.operator.equals"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              }
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 3
+                },
+                "conditions": [
+                  {
+                    "id": "b2aecff0-bb87-4087-a538-197b2781c8c9",
+                    "leftValue": "={{ $json.text }}",
+                    "rightValue": "security-qa",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals",
+                      "name": "filter.operator.equals"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              }
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 3
+                },
+                "conditions": [
+                  {
+                    "id": "fe64bc28-b27b-415a-b498-d9aaac09a866",
+                    "leftValue": "={{ $json.text }}",
+                    "rightValue": "performance-qa",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals",
+                      "name": "filter.operator.equals"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              }
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 3
+                },
+                "conditions": [
+                  {
+                    "id": "8f6e4c92-8006-4926-8701-a478d5cf8a3d",
+                    "leftValue": "={{ $json.text }}",
+                    "rightValue": "general-qa",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals",
+                      "name": "filter.operator.equals"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              }
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 3
+                },
+                "conditions": [
+                  {
+                    "id": "d98a4e73-5f7e-4897-a5a6-fef2ab906205",
+                    "leftValue": "={{ $json.text }}",
+                    "rightValue": "Automation Architect",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals",
+                      "name": "filter.operator.equals"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              }
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.switch",
+      "typeVersion": 3.4,
+      "position": [
+        544,
+        16
+      ],
+      "id": "0c73ca9e-2596-407c-bbf3-c47f8077f999",
+      "name": "Switch"
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "={{ $('Edit Fields').item.json.pergunta_usuario }}",
+        "options": {
+          "systemMessage": "Você é um QA Test Designer Sênior especialista em instituições financeiras.\n\nSua missão é criar casos de teste funcionais, regressivos e exploratórios com foco em cobertura, clareza e rastreabilidade.\n\nUse primeiro a Base de Conhecimento:\n\n{{ $('Code in JavaScript').item.json.contexto }}\n\nRegras:\n- Responda sempre em português.\n- Sempre crie cenários em Gherkin.\n- Não invente regras de negócio específicas.\n- Se faltar contexto, sinalize a lacuna e complemente com boas práticas de QA.\n- Considere fluxos positivos, negativos, alternativos e regressivos.\n\nFormato obrigatório:\n\n## Objetivo\n## Escopo\n## Pré-condições\n## Massa de Teste\n## Casos de Teste\n## Cenários Gherkin\n## Critérios de Aceite\n## Evidências\n## Riscos\n## Sugestões de Automação"
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 3.1,
+      "position": [
+        1008,
+        -224
+      ],
+      "id": "96c111c3-44a1-48de-948c-c43ba89e590d",
+      "name": "QA Test Designer"
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "={{ $('Edit Fields').item.json.pergunta_usuario }}",
+        "options": {
+          "systemMessage": "Você é um API Expert Sênior especializado em QA para instituições financeiras.\n\nSua missão é criar estratégias e cenários de testes para APIs REST, autenticação, contratos, headers, payloads e integrações.\n\nUse primeiro a Base de Conhecimento:\n\n{{ $('Code in JavaScript').item.json.contexto }}\n\nRegras:\n- Responda sempre em português.\n- Não invente endpoints reais.\n- Use endpoints genéricos quando necessário.\n- Nunca use CPF real, token real, senha real ou dados sensíveis reais.\n- Considere autenticação, autorização, LGPD, logs, auditoria e rastreabilidade.\n- Sugira Bruno API e Rest Assured quando aplicável.\n\nFormato obrigatório:\n\n## Objetivo\n## Endpoint sugerido\n## Método HTTP\n## Headers\n## Payload\n## Status Esperados\n## Validações Funcionais\n## Testes Negativos\n## Testes de Segurança\n## Massa de Teste\n## Sugestão Bruno API\n## Sugestão Rest Assured\n## Evidências"
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 3.1,
+      "position": [
+        1488,
+        -224
+      ],
+      "id": "b4cc408e-efce-40f3-b54b-aa75e6614b36",
+      "name": "API Expert"
+    },
+    {
+      "parameters": {
+        "model": {
+          "__rl": true,
+          "mode": "list",
+          "value": "gpt-5-mini"
+        },
+        "builtInTools": {},
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatOpenAi",
+      "typeVersion": 1.3,
+      "position": [
+        1488,
+        -80
+      ],
+      "id": "8320df13-cfc2-4bf3-be71-dd4eb6115463",
+      "name": "OpenAI Chat Model2",
+      "credentials": {
+        "openAiApi": {
+          "id": "ZsQprvwOGrMFJntP",
+          "name": "n8n free OpenAI API credits"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "sessionIdType": "customKey",
+        "sessionKey": "={{ $('Edit Fields').item.json.sessionId }}",
+        "contextWindowLength": 20
+      },
+      "type": "@n8n/n8n-nodes-langchain.memoryBufferWindow",
+      "typeVersion": 1.4,
+      "position": [
+        1584,
+        -80
+      ],
+      "id": "78d07501-8d7a-4f36-92f3-058a5f2a0f55",
+      "name": "Simple Memory1"
+    },
+    {
+      "parameters": {
+        "model": {
+          "__rl": true,
+          "mode": "list",
+          "value": "gpt-5-mini"
+        },
+        "builtInTools": {},
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatOpenAi",
+      "typeVersion": 1.3,
+      "position": [
+        1888,
+        -80
+      ],
+      "id": "ced8120e-aefc-4b0e-9289-ce5d444d57ca",
+      "name": "OpenAI Chat Model3",
+      "credentials": {
+        "openAiApi": {
+          "id": "ZsQprvwOGrMFJntP",
+          "name": "n8n free OpenAI API credits"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "sessionIdType": "customKey",
+        "sessionKey": "={{ $('Edit Fields').item.json.sessionId }}",
+        "contextWindowLength": 20
+      },
+      "type": "@n8n/n8n-nodes-langchain.memoryBufferWindow",
+      "typeVersion": 1.4,
+      "position": [
+        1984,
+        -80
+      ],
+      "id": "e9ddddee-bdea-41e2-8b3b-77c2da4cd765",
+      "name": "Simple Memory2"
+    },
+    {
+      "parameters": {
+        "sessionIdType": "customKey",
+        "sessionKey": "={{ $('Edit Fields').item.json.sessionId }}",
+        "contextWindowLength": 20
+      },
+      "type": "@n8n/n8n-nodes-langchain.memoryBufferWindow",
+      "typeVersion": 1.4,
+      "position": [
+        2368,
+        -80
+      ],
+      "id": "38722c0b-42cd-4f31-abce-167aa562e148",
+      "name": "Simple Memory3"
+    },
+    {
+      "parameters": {
+        "model": {
+          "__rl": true,
+          "mode": "list",
+          "value": "gpt-5-mini"
+        },
+        "builtInTools": {},
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatOpenAi",
+      "typeVersion": 1.3,
+      "position": [
+        992,
+        288
+      ],
+      "id": "c7a02f24-6142-4082-9917-1fe0f937ca6e",
+      "name": "OpenAI Chat Model5",
+      "credentials": {
+        "openAiApi": {
+          "id": "ZsQprvwOGrMFJntP",
+          "name": "n8n free OpenAI API credits"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "sessionIdType": "customKey",
+        "sessionKey": "={{ $('Edit Fields').item.json.sessionId }}",
+        "contextWindowLength": 20
+      },
+      "type": "@n8n/n8n-nodes-langchain.memoryBufferWindow",
+      "typeVersion": 1.4,
+      "position": [
+        1088,
+        288
+      ],
+      "id": "ccdb337c-cb2f-486d-82ee-7502d78c4110",
+      "name": "Simple Memory4"
+    },
+    {
+      "parameters": {
+        "model": {
+          "__rl": true,
+          "mode": "list",
+          "value": "gpt-5-mini"
+        },
+        "builtInTools": {},
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatOpenAi",
+      "typeVersion": 1.3,
+      "position": [
+        1904,
+        304
+      ],
+      "id": "6c6a6f32-141d-4d69-a529-ad9788bca224",
+      "name": "OpenAI Chat Model6",
+      "credentials": {
+        "openAiApi": {
+          "id": "ZsQprvwOGrMFJntP",
+          "name": "n8n free OpenAI API credits"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "sessionIdType": "customKey",
+        "sessionKey": "={{ $('Edit Fields').item.json.sessionId }}",
+        "contextWindowLength": 20
+      },
+      "type": "@n8n/n8n-nodes-langchain.memoryBufferWindow",
+      "typeVersion": 1.4,
+      "position": [
+        2000,
+        304
+      ],
+      "id": "8efb1110-0f3b-41c8-ad9b-67571c45d114",
+      "name": "Simple Memory5"
+    },
+    {
+      "parameters": {
+        "sessionIdType": "customKey",
+        "sessionKey": "={{ $('Edit Fields').item.json.sessionId }}",
+        "contextWindowLength": 20
+      },
+      "type": "@n8n/n8n-nodes-langchain.memoryBufferWindow",
+      "typeVersion": 1.4,
+      "position": [
+        1600,
+        288
+      ],
+      "id": "5c2c05c2-4c84-4f97-8192-8308dbab4e9e",
+      "name": "Simple Memory6"
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "={{ $('Edit Fields').item.json.pergunta_usuario }}",
+        "options": {
+          "systemMessage": "=Você é um QA Lead especializado em revisão de User Stories para instituições financeiras.\n\nSua missão é revisar requisitos, critérios de aceite e regras de negócio antes do desenvolvimento.\n\nUse primeiro a Base de Conhecimento:\n\n{{ $('Code in JavaScript').item.json.contexto }}\n\nAnalise:\n- Clareza\n- Completude\n- INVEST\n- Critérios de aceite\n- Fluxos alternativos\n- Fluxos negativos\n- Regras de negócio\n- Segurança\n- LGPD\n- Logs\n- Auditoria\n- Observabilidade\n- Dependências\n- Casos extremos\n\nFormato obrigatório:\n\n## Resumo\n## Pontos Positivos\n## Problemas Encontrados\n## Ambiguidades\n## Riscos\n## Sugestões de Melhoria\n## Critérios de Aceite Sugeridos\n## Casos de Teste Sugeridos\n## Perguntas para PO"
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 3.1,
+      "position": [
+        1888,
+        -224
+      ],
+      "id": "63155948-641f-44ae-8bad-3f7fc52d4103",
+      "name": "Story Reviewer"
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "={{ $('Edit Fields').item.json.pergunta_usuario }}",
+        "options": {
+          "systemMessage": "Você é um Security QA Sênior especializado em instituições financeiras.\n\nSua missão é analisar riscos de segurança, privacidade e compliance em requisitos, APIs, fluxos e casos de teste.\n\nUse primeiro a Base de Conhecimento:\n\n{{ $('Code in JavaScript').item.json.contexto }}\n\nRegras:\n- Responda sempre em português.\n- Nunca sugira uso de CPF real, token real, senha real ou dados sensíveis reais.\n- Considere LGPD, OWASP API Top 10, autenticação, autorização, logs, auditoria e rastreabilidade.\n- Não invente regras de negócio específicas.\n- Quando faltar contexto, sinalize a lacuna.\n\nFormato obrigatório:\n\n## Objetivo da Análise\n## Riscos Identificados\n## Testes de Autenticação\n## Testes de Autorização\n## Testes LGPD\n## Validação de Logs e Auditoria\n## Testes Negativos\n## Critérios de Aceite de Segurança\n## Evidências Esperadas\n## Recomendações"
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 3.1,
+      "position": [
+        2272,
+        -224
+      ],
+      "id": "3a0c54ce-0528-453c-8cd5-8e3fe3985855",
+      "name": "Security QA"
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "={{ $('Edit Fields').item.json.pergunta_usuario }}",
+        "options": {
+          "systemMessage": "Você é um Performance QA Sênior especializado em sistemas financeiros de alta criticidade.\n\nSua missão é propor estratégias de teste de performance, carga, stress, spike, volume e resiliência.\n\nUse primeiro a Base de Conhecimento:\n\n{{ $('Code in JavaScript').item.json.contexto }}\n\nRegras:\n- Responda sempre em português.\n- Não invente SLAs específicos.\n- Quando não houver SLA informado, sugira métricas de referência e peça confirmação.\n- Considere latência, throughput, concorrência, tempo de resposta, erro, timeout, filas, logs e observabilidade.\n- Sugira K6 e JMeter quando aplicável.\n\nFormato obrigatório:\n\n## Objetivo\n## Escopo\n## Cenários de Performance\n## Massa e Volume\n## Métricas\n## Critérios de Sucesso\n## Teste de Carga\n## Teste de Stress\n## Teste de Spike\n## Teste de Resiliência\n## Sugestão K6\n## Sugestão JMeter\n## Riscos"
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 3.1,
+      "position": [
+        992,
+        144
+      ],
+      "id": "29432a00-6e71-4328-8bb2-115edef72a69",
+      "name": "Performance QA"
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "={{ $('Edit Fields').item.json.pergunta_usuario }}",
+        "options": {
+          "systemMessage": "Você é um Test Automation Architect Sênior especializado em automação de testes para instituições financeiras.\n\nSua missão é propor arquitetura de automação escalável, manutenível e integrada ao CI/CD.\n\nUse primeiro a Base de Conhecimento:\n\n{{ $('Code in JavaScript').item.json.contexto }}\n\nRegras:\n- Responda sempre em português.\n- Aplique Clean Code, SOLID, Page Object Model, Screenplay Pattern, Factory, Builder e Strategy quando fizer sentido.\n- Considere testes UI, API, contrato, integração, regressão e smoke.\n- Sugira Playwright para UI, Rest Assured para API Java, Bruno para validações manuais/coleções e K6 para performance.\n- Inclua integração com GitHub Actions, Jenkins, Azure DevOps ou GitLab CI.\n\nFormato obrigatório:\n\n## Objetivo\n## Estratégia de Automação\n## Arquitetura Recomendada\n## Organização de Pastas\n## Design Patterns\n## Stack Recomendada\n## Pipeline CI/CD\n## Boas Práticas\n## Riscos Técnicos\n## Exemplo de Estrutura"
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 3.1,
+      "position": [
+        1904,
+        160
+      ],
+      "id": "4ca6448f-2b9b-4e04-83ab-23fed19d8c2c",
+      "name": "Automation Architect"
+    },
+    {
+      "parameters": {
+        "model": {
+          "__rl": true,
+          "mode": "list",
+          "value": "gpt-5-mini"
+        },
+        "builtInTools": {},
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatOpenAi",
+      "typeVersion": 1.3,
+      "position": [
+        2272,
+        -80
+      ],
+      "id": "47839ed8-f632-4471-8623-550de73a8952",
+      "name": "OpenAI Chat Model4",
+      "credentials": {
+        "openAiApi": {
+          "id": "ZsQprvwOGrMFJntP",
+          "name": "n8n free OpenAI API credits"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "={{ $('Edit Fields').item.json.pergunta_usuario }}",
+        "options": {
+          "systemMessage": "Você é um QA Lead Sênior especialista em instituições financeiras.\n\nSua missão é responder dúvidas gerais sobre qualidade de software, estratégia de testes, processos, riscos e boas práticas.\n\nUse primeiro a Base de Conhecimento:\n\n{{ $('Code in JavaScript').item.json.contexto }}\n\nRegras:\n- Responda sempre em português.\n- Seja claro, objetivo e prático.\n- Quando a pergunta envolver testes, sugira cenários em Gherkin.\n- Considere Jira, Xray, BDD, TDD, API, UI, segurança, performance, integração e regressão.\n- Não invente dados, endpoints ou regras de negócio específicas.\n\nFormato obrigatório:\n\n## Resposta\n## Recomendações\n## Exemplo Prático\n## Próximos Passos"
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 3.1,
+      "position": [
+        1504,
+        144
+      ],
+      "id": "c3471322-422e-4cea-ba93-c3981cdce972",
+      "name": "General QA"
+    },
+    {
+      "parameters": {
+        "model": {
+          "__rl": true,
+          "mode": "list",
+          "value": "gpt-5-mini"
+        },
+        "builtInTools": {},
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatOpenAi",
+      "typeVersion": 1.3,
+      "position": [
+        1504,
+        288
+      ],
+      "id": "9c4325c3-e417-4049-9ee4-f64c5b86de26",
+      "name": "OpenAI Chat Model7",
+      "credentials": {
+        "openAiApi": {
+          "id": "ZsQprvwOGrMFJntP",
+          "name": "n8n free OpenAI API credits"
+        }
+      }
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "Edit Fields": {
+      "main": [
+        [
+          {
+            "node": "Get row(s) in sheet",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "OpenAI Chat Model": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "QA Test Designer",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Simple Memory": {
+      "ai_memory": [
+        [
+          {
+            "node": "QA Test Designer",
+            "type": "ai_memory",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "When chat message received": {
+      "main": [
+        [
+          {
+            "node": "Edit Fields",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get row(s) in sheet": {
+      "main": [
+        [
+          {
+            "node": "Code in JavaScript",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Code in JavaScript": {
+      "main": [
+        [
+          {
+            "node": "Basic LLM Chain",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Basic LLM Chain": {
+      "main": [
+        [
+          {
+            "node": "Switch",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "OpenAI Chat Model1": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "Basic LLM Chain",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "QA Test Designer": {
+      "main": [
+        []
+      ]
+    },
+    "Switch": {
+      "main": [
+        [
+          {
+            "node": "QA Test Designer",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "API Expert",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Story Reviewer",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Security QA",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Performance QA",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "General QA",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Automation Architect",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "OpenAI Chat Model2": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "API Expert",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Simple Memory1": {
+      "ai_memory": [
+        [
+          {
+            "node": "API Expert",
+            "type": "ai_memory",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "OpenAI Chat Model3": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "Story Reviewer",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Simple Memory2": {
+      "ai_memory": [
+        [
+          {
+            "node": "Story Reviewer",
+            "type": "ai_memory",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Simple Memory3": {
+      "ai_memory": [
+        [
+          {
+            "node": "Security QA",
+            "type": "ai_memory",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "OpenAI Chat Model5": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "Performance QA",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Simple Memory4": {
+      "ai_memory": [
+        [
+          {
+            "node": "Performance QA",
+            "type": "ai_memory",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "OpenAI Chat Model6": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "Automation Architect",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Simple Memory5": {
+      "ai_memory": [
+        [
+          {
+            "node": "Automation Architect",
+            "type": "ai_memory",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Simple Memory6": {
+      "ai_memory": [
+        [
+          {
+            "node": "General QA",
+            "type": "ai_memory",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "OpenAI Chat Model4": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "Security QA",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "OpenAI Chat Model7": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "General QA",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": true,
+  "settings": {
+    "executionOrder": "v1",
+    "binaryMode": "separate",
+    "availableInMCP": false
+  },
+  "versionId": "2b6fbb20-04a0-48c8-a1bf-20ed6bc445b5",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "10dca0be57fe14bd308f4d65cf50fc386ad82335a6493da1f3abf03898a6f560"
+  },
+  "nodeGroups": [],
+  "id": "UV3bhQw3a8oUjv3h",
+  "tags": []
+}
